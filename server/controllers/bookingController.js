@@ -19,62 +19,32 @@ const getDatesBetween = (start, end) => {
 
 const toDateString = (date) => new Date(date).toISOString().split('T')[0];
 
-const createBooking = async (req, res) => {
-    const { serviceId, startDate, endDate } = req.body;
-
-    const service = await Service.findById(serviceId);
-    if (!service) {
-        res.status(404).json({ success: false, error: 'Service not found' });
-        return;
-    }
-
+const normalizeDates = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     start.setUTCHours(0, 0, 0, 0);
     end.setUTCHours(0, 0, 0, 0);
+    return { start, end };
+};
 
-    if (end < start) {
-        res.status(400).json({ success: false, error: 'endDate must be >= startDate' });
-        return;
-    }
-
-    const totalDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
-    const totalPrice = totalDays * service.pricePerDay;
-
-    const requestedDates = getDatesBetween(start, end);
+const checkAvailability = (service, requestedDates) => {
     const availableDateStrings = service.availabilityDates.map(toDateString);
-
-    const allAvailable = requestedDates.every((date) =>
+    return requestedDates.every((date) =>
         availableDateStrings.includes(toDateString(date))
     );
+};
 
-    if (!allAvailable) {
-        res.status(400).json({ success: false, error: 'Service not available for selected dates' });
-        return;
-    }
-
-    // Remove booked dates from availability
+const removeDatesFromService = async (service, requestedDates) => {
     const requestedDateStrings = requestedDates.map(toDateString);
     service.availabilityDates = service.availabilityDates.filter(
         (date) => !requestedDateStrings.includes(toDateString(date))
     );
     await service.save();
+};
 
-    const booking = await Booking.create({
-        user: req.user.id,
-        service: serviceId,
-        startDate: start,
-        endDate: end,
-        totalDays,
-        totalPrice,
-        status: 'confirmed',
-    });
-
-    await booking.populate('service', 'title');
-
-    // Email — don't fail booking if email fails
+const sendBookingEmail = async (userId, booking, start, end, totalDays, totalPrice) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(userId);
         await sendEmail({
             to: user.email,
             subject: 'Booking Confirmation — Event Booking Platform',
@@ -90,6 +60,47 @@ const createBooking = async (req, res) => {
     } catch (emailError) {
         console.error('Booking email failed:', emailError.message);
     }
+};
+
+const createBooking = async (req, res) => {
+    const { serviceId, startDate, endDate } = req.body;
+
+    const service = await Service.findById(serviceId);
+    if (!service) {
+        res.status(404).json({ success: false, error: 'Service not found' });
+        return;
+    }
+
+    const { start, end } = normalizeDates(startDate, endDate);
+
+    if (end < start) {
+        res.status(400).json({ success: false, error: 'endDate must be >= startDate' });
+        return;
+    }
+
+    const totalDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    const totalPrice = totalDays * service.pricePerDay;
+    const requestedDates = getDatesBetween(start, end);
+
+    if (!checkAvailability(service, requestedDates)) {
+        res.status(400).json({ success: false, error: 'Service not available for selected dates' });
+        return;
+    }
+
+    await removeDatesFromService(service, requestedDates);
+
+    const booking = await Booking.create({
+        user: req.user.id,
+        service: serviceId,
+        startDate: start,
+        endDate: end,
+        totalDays,
+        totalPrice,
+        status: 'confirmed',
+    });
+
+    await booking.populate('service', 'title');
+    await sendBookingEmail(req.user.id, booking, start, end, totalDays, totalPrice);
 
     res.status(201).json({ success: true, booking });
 };

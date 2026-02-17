@@ -1,8 +1,6 @@
 const Service = require('../models/Service');
 
-const getServices = async (req, res) => {
-    const { keyword, category, location, minPrice, maxPrice, date, page = 1, limit = 10, sort = '-createdAt' } = req.query;
-
+const buildFilter = ({ keyword, category, location, minPrice, maxPrice, date }) => {
     const filter = {};
 
     if (keyword) {
@@ -32,6 +30,13 @@ const getServices = async (req, res) => {
         filter.availabilityDates = searchDate;
     }
 
+    return filter;
+};
+
+const getServices = async (req, res) => {
+    const { page = 1, limit = 10, sort = '-createdAt', ...filterParams } = req.query;
+
+    const filter = buildFilter(filterParams);
     const pageNum = Math.max(1, Number(page));
     const limitNum = Math.min(50, Math.max(1, Number(limit)));
     const skip = (pageNum - 1) * limitNum;

@@ -7,6 +7,13 @@ const generateToken = (user) => {
     });
 };
 
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 const register = async (req, res) => {
     const { name, email, password, role } = req.body;
 
@@ -19,9 +26,8 @@ const register = async (req, res) => {
     const user = await User.create({ name, email, password, role });
     const token = generateToken(user);
 
-    res.status(201).json({
+    res.status(201).cookie('token', token, cookieOptions).json({
         success: true,
-        token,
         user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
 };
@@ -43,9 +49,8 @@ const login = async (req, res) => {
 
     const token = generateToken(user);
 
-    res.status(200).json({
+    res.status(200).cookie('token', token, cookieOptions).json({
         success: true,
-        token,
         user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
 };
@@ -65,4 +70,8 @@ const getMe = async (req, res) => {
     });
 };
 
-module.exports = { register, login, getMe };
+const logout = (req, res) => {
+    res.clearCookie('token').json({ success: true, message: 'Logged out' });
+};
+
+module.exports = { register, login, getMe, logout };
