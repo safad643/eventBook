@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const apiRoot = import.meta.env.VITE_API_TARGET;
 const API = axios.create({
-    baseURL: '/api',
+    // In production, point directly at the deployed backend (VITE_API_TARGET),
+    // which should be the backend root, e.g. https://your-backend.onrender.com
+    // In development (when not set), fall back to the relative /api path.
+    baseURL: apiRoot ? `${apiRoot}/api` : '/api',
     withCredentials: true,
 });
 
