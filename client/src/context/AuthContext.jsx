@@ -31,11 +31,17 @@ export function AuthProvider({ children }) {
 
     const login = async (email, password) => {
         const { data } = await API.post('/auth/login', { email, password });
-        setUser(data.user);
+        const loggedInUser = data.user;
+        setUser(loggedInUser);
         toast.success('Logged in successfully');
 
-        const redirectTo = location.state?.from?.pathname || '/';
-        navigate(redirectTo, { replace: true });
+        const isAdmin = loggedInUser?.role === 'admin';
+        if (isAdmin) {
+            navigate('/admin', { replace: true });
+        } else {
+            const redirectTo = location.state?.from?.pathname || '/';
+            navigate(redirectTo, { replace: true });
+        }
     };
 
     const register = async (name, email, password, role) => {
@@ -46,9 +52,12 @@ export function AuthProvider({ children }) {
 
     const verifyOtp = async (email, otp) => {
         const { data } = await API.post('/auth/verify-otp', { email, otp });
-        setUser(data.user);
+        const verifiedUser = data.user;
+        setUser(verifiedUser);
         toast.success('Email verified successfully');
-        navigate('/', { replace: true });
+
+        const isAdmin = verifiedUser?.role === 'admin';
+        navigate(isAdmin ? '/admin' : '/', { replace: true });
     };
 
     const resendOtp = async (email) => {

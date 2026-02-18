@@ -11,10 +11,12 @@ export default function Navbar() {
     const { user, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const isAdmin = user?.role === 'admin';
+
     const navLinks = [
-        { to: '/services', label: 'Services' },
-        ...(user ? [{ to: '/bookings', label: 'My Bookings' }] : []),
-        ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Admin Dashboard' }] : []),
+        ...(!isAdmin ? [{ to: '/services', label: 'Services' }] : []),
+        ...(!isAdmin && user ? [{ to: '/bookings', label: 'My Bookings' }] : []),
+        ...(isAdmin ? [{ to: '/admin', label: 'Admin Dashboard' }] : []),
     ];
 
     const handleLogout = async () => {
