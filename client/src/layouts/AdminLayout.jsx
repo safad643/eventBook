@@ -46,10 +46,11 @@ export default function AdminLayout() {
 
                 {/* Sidebar */}
                 <aside
-                    className={`fixed inset-y-0 left-0 z-20 mt-16 w-64 transform border-r border-gray-200 bg-white transition-transform lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-                        }`}
+                    className={`fixed inset-y-0 left-0 z-20 mt-16 w-64 transform border-r border-gray-200 bg-white transition-transform lg:static lg:translate-x-0 ${
+                        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}
                 >
-                    <nav className="flex flex-col gap-1 p-4">
+                    <nav className="flex flex-col gap-1 px-4 pt-2 pb-4">
                         {sidebarLinks.map((link) => (
                             <NavLink
                                 key={link.to}

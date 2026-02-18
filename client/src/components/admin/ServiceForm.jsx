@@ -79,121 +79,120 @@ export default function ServiceForm({ initialData = null, onSubmit, loading }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Title */}
-            <div>
-                <label className={labelClass}>Title</label>
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="e.g. Sunset Grand Hall" />
-                {errors.title && <p className={errorClass}>{errors.title}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Row 1: Title, Category, Price — horizontal */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                    <label className={labelClass}>Title</label>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} placeholder="e.g. Sunset Grand Hall" />
+                    {errors.title && <p className={errorClass}>{errors.title}</p>}
+                </div>
+                <div>
+                    <label className={labelClass}>Category</label>
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
+                        <option value="">Select category</option>
+                        {CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                        ))}
+                    </select>
+                    {errors.category && <p className={errorClass}>{errors.category}</p>}
+                </div>
+                <div>
+                    <label className={labelClass}>Price Per Day (₹)</label>
+                    <input type="number" min="0" value={pricePerDay} onChange={(e) => setPricePerDay(e.target.value)} className={inputClass} placeholder="25000" />
+                    {errors.pricePerDay && <p className={errorClass}>{errors.pricePerDay}</p>}
+                </div>
             </div>
 
-            {/* Category */}
-            <div>
-                <label className={labelClass}>Category</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
-                    <option value="">Select category</option>
-                    {CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
-                    ))}
-                </select>
-                {errors.category && <p className={errorClass}>{errors.category}</p>}
-            </div>
-
-            {/* Price */}
-            <div>
-                <label className={labelClass}>Price Per Day (₹)</label>
-                <input type="number" min="0" value={pricePerDay} onChange={(e) => setPricePerDay(e.target.value)} className={inputClass} placeholder="25000" />
-                {errors.pricePerDay && <p className={errorClass}>{errors.pricePerDay}</p>}
-            </div>
-
-            {/* Description */}
+            {/* Row 2: Description — full width, compact */}
             <div>
                 <label className={labelClass}>Description</label>
-                <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} placeholder="Describe the service…" />
+                <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} placeholder="Describe the service…" />
                 {errors.description && <p className={errorClass}>{errors.description}</p>}
             </div>
 
-            {/* Location */}
-            <div>
-                <label className={labelClass}>Location</label>
-                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} placeholder="Mumbai" />
-                {errors.location && <p className={errorClass}>{errors.location}</p>}
+            {/* Row 3: Location, Contact — horizontal */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label className={labelClass}>Location</label>
+                    <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} placeholder="Mumbai" />
+                    {errors.location && <p className={errorClass}>{errors.location}</p>}
+                </div>
+                <div>
+                    <label className={labelClass}>Contact Details</label>
+                    <input type="text" value={contactDetails} onChange={(e) => setContactDetails(e.target.value)} className={inputClass} placeholder="Phone or email" />
+                    {errors.contactDetails && <p className={errorClass}>{errors.contactDetails}</p>}
+                </div>
             </div>
 
-            {/* Contact Details */}
-            <div>
-                <label className={labelClass}>Contact Details</label>
-                <input type="text" value={contactDetails} onChange={(e) => setContactDetails(e.target.value)} className={inputClass} placeholder="Phone or email" />
-                {errors.contactDetails && <p className={errorClass}>{errors.contactDetails}</p>}
-            </div>
+            {/* Row 4: Availability Dates + Images — side by side */}
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <div>
+                    <label className={labelClass}>Availability Dates</label>
+                    <DatePicker
+                        selected={null}
+                        onChange={handleDateChange}
+                        highlightDates={dates}
+                        minDate={new Date()}
+                        placeholderText="Click dates on the calendar"
+                        className={inputClass}
+                        dateFormat="MMM d, yyyy"
+                        inline
+                    />
+                    {dates.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                            {dates
+                                .sort((a, b) => a - b)
+                                .map((d, i) => (
+                                    <span key={i} className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-medium text-primary-700">
+                                        {d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        <button type="button" onClick={() => removeDate(i)} className="hover:text-primary-900">
+                                            <HiOutlineXMark className="h-3.5 w-3.5" />
+                                        </button>
+                                    </span>
+                                ))}
+                        </div>
+                    )}
+                    {errors.dates && <p className={errorClass}>{errors.dates}</p>}
+                </div>
 
-            {/* Availability Dates — multi-select via click */}
-            <div>
-                <label className={labelClass}>Availability Dates</label>
-                <DatePicker
-                    selected={null}
-                    onChange={handleDateChange}
-                    highlightDates={dates}
-                    minDate={new Date()}
-                    placeholderText="Click dates on the calendar"
-                    className={inputClass}
-                    dateFormat="MMM d, yyyy"
-                    inline
-                />
-                {dates.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                        {dates
-                            .sort((a, b) => a - b)
-                            .map((d, i) => (
-                                <span key={i} className="inline-flex items-center gap-1 rounded-full bg-primary-100 px-2.5 py-1 text-xs font-medium text-primary-700">
-                                    {d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    <button type="button" onClick={() => removeDate(i)} className="hover:text-primary-900">
-                                        <HiOutlineXMark className="h-3.5 w-3.5" />
-                                    </button>
-                                </span>
+                <div>
+                    <label className={labelClass}>Images (max 5)</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => setImages(e.target.files)}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary-100"
+                    />
+                    {errors.images && <p className={errorClass}>{errors.images}</p>}
+
+                    {/* Preview new files */}
+                    {images && images.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {Array.from(images).map((file, i) => (
+                                <img key={i} src={URL.createObjectURL(file)} alt={`preview-${i}`} className="h-20 w-20 rounded-lg object-cover" />
                             ))}
-                    </div>
-                )}
-                {errors.dates && <p className={errorClass}>{errors.dates}</p>}
-            </div>
+                            {isEdit && <p className="mt-1 w-full text-xs text-amber-600">New images will replace existing ones.</p>}
+                        </div>
+                    )}
 
-            {/* Images */}
-            <div>
-                <label className={labelClass}>Images (max 5)</label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setImages(e.target.files)}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary-100"
-                />
-                {errors.images && <p className={errorClass}>{errors.images}</p>}
-
-                {/* Preview new files */}
-                {images && images.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {Array.from(images).map((file, i) => (
-                            <img key={i} src={URL.createObjectURL(file)} alt={`preview-${i}`} className="h-20 w-20 rounded-lg object-cover" />
-                        ))}
-                        {isEdit && <p className="mt-1 w-full text-xs text-amber-600">New images will replace existing ones.</p>}
-                    </div>
-                )}
-
-                {/* Show existing images in edit mode when no new files */}
-                {isEdit && !images && initialData?.images?.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {initialData.images.map((url, i) => (
-                            <img key={i} src={url} alt={`existing-${i}`} className="h-20 w-20 rounded-lg object-cover" />
-                        ))}
-                    </div>
-                )}
+                    {/* Show existing images in edit mode when no new files */}
+                    {isEdit && !images && initialData?.images?.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {initialData.images.map((url, i) => (
+                                <img key={i} src={url} alt={`existing-${i}`} className="h-20 w-20 rounded-lg object-cover" />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Submit */}
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {loading ? 'Saving…' : isEdit ? 'Update Service' : 'Create Service'}
             </button>

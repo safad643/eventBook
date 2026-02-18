@@ -19,11 +19,11 @@ export default function AdminCreateServicePage() {
     };
 
     return (
-        <div className="mx-auto max-w-2xl">
+        <div className="w-full max-w-[1600px]">
             <h1 className="text-2xl font-bold text-gray-900">Create New Service</h1>
             <p className="mt-1 text-sm text-gray-600">Fill in the details to list a new service</p>
 
-            <div className="mt-6 rounded-lg bg-white p-6 shadow-md">
+            <div className="mt-4 rounded-lg bg-white p-6 shadow-md">
                 <ServiceForm onSubmit={handleSubmit} loading={loading} />
             </div>
         </div>

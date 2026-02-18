@@ -22,11 +22,12 @@ export default function Navbar() {
 
     const isAdmin = user?.role === 'admin';
 
-    const navLinks = [
-        ...(!isAdmin ? [{ to: '/services', label: 'Services' }] : []),
-        ...(!isAdmin && user ? [{ to: '/bookings', label: 'My Bookings' }] : []),
-        ...(isAdmin ? [{ to: '/admin', label: 'Admin Dashboard' }] : []),
-    ];
+    const navLinks = !isAdmin
+        ? [
+              { to: '/services', label: 'Services' },
+              ...(user ? [{ to: '/bookings', label: 'My Bookings' }] : []),
+          ]
+        : [];
 
     const handleLogout = async () => {
         setMenuOpen(false);
@@ -34,15 +35,17 @@ export default function Navbar() {
     };
 
     return (
-        <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                {/* Brand */}
-                <Link to="/" className="text-xl font-bold text-primary-600">
-                    EventBook
-                </Link>
+        <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
+            <div className="flex h-16 w-full items-center px-4 sm:px-6 lg:px-8">
+                {/* Left: Brand */}
+                <div className="flex flex-1 items-center">
+                    <Link to="/" className="text-xl font-bold text-primary-600">
+                        EventBook
+                    </Link>
+                </div>
 
-                {/* Desktop nav */}
-                <nav className="hidden items-center gap-6 md:flex">
+                {/* Center: Desktop nav links */}
+                <nav className="hidden flex-1 items-center justify-center gap-6 md:flex">
                     {navLinks.map((link) => (
                         <NavLink
                             key={link.to}
@@ -52,7 +55,10 @@ export default function Navbar() {
                             {link.label}
                         </NavLink>
                     ))}
+                </nav>
 
+                {/* Right: User / Auth actions */}
+                <div className="hidden flex-1 items-center justify-end md:flex">
                     {user ? (
                         <div className="flex items-center gap-2.5 rounded-full border border-gray-200 py-1.5 pl-1.5 pr-3 shadow-sm">
                             <UserAvatar name={user.name} />
@@ -82,12 +88,12 @@ export default function Navbar() {
                             </Link>
                         </div>
                     )}
-                </nav>
+                </div>
 
                 {/* Mobile hamburger */}
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
-                    className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
+                    className="ml-auto rounded-lg p-2 text-gray-600 hover:bg-gray-100 md:hidden"
                     aria-label="Toggle menu"
                 >
                     {menuOpen ? <HiOutlineXMark className="h-6 w-6" /> : <HiOutlineBars3 className="h-6 w-6" />}
