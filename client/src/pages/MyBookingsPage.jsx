@@ -1,40 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import API from '../api/axios';
+import { useBookings } from '../hooks';
 import BookingCard from '../components/booking/BookingCard';
 import Spinner from '../components/common/Spinner';
 
 const TABS = ['all', 'confirmed', 'cancelled'];
 
 export default function MyBookingsPage() {
-    const [bookings, setBookings] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { bookings, loading, refetch } = useBookings();
     const [activeTab, setActiveTab] = useState('all');
 
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchBookings = async () => {
-            try {
-                const { data } = await API.get('/bookings', { signal: controller.signal });
-                setBookings(data.bookings);
-            } catch (error) {
-                if (error.name !== 'CanceledError') {
-                    console.error('Failed to load bookings:', error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBookings();
-        return () => controller.abort();
-    }, []);
-
     const handleUpdate = (bookingId, newStatus) => {
-        setBookings((prev) =>
-            prev.map((b) => (b._id === bookingId ? { ...b, status: newStatus } : b))
-        );
+        refetch();
     };
 
     const filtered = activeTab === 'all' ? bookings : bookings.filter((b) => b.status === activeTab);

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import API from '../api/axios';
+import { useServices } from '../hooks';
 import ServiceFilters from '../components/services/ServiceFilters';
 import ServiceGrid from '../components/services/ServiceGrid';
 import Pagination from '../components/common/Pagination';
@@ -10,42 +10,20 @@ const FILTER_KEYS = ['keyword', 'category', 'location', 'minPrice', 'maxPrice', 
 
 export default function ServicesPage() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [services, setServices] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [totalPages, setTotalPages] = useState(1);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-    /* Read current filters from URL */
-    const filters = {};
-    for (const key of FILTER_KEYS) {
-        const val = searchParams.get(key);
-        if (val) filters[key] = val;
-    }
+    const filters = useMemo(() => {
+        const f = {};
+        for (const key of FILTER_KEYS) {
+            const val = searchParams.get(key);
+            if (val) f[key] = val;
+        }
+        return f;
+    }, [searchParams]);
     const currentPage = Number(searchParams.get('page')) || 1;
+    const params = useMemo(() => ({ ...filters, page: currentPage, limit: 9 }), [filters, currentPage]);
 
-    /* Fetch services whenever URL params change */
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchServices = async () => {
-            setLoading(true);
-            try {
-                const params = { ...filters, page: currentPage, limit: 9 };
-                const { data } = await API.get('/services', { params, signal: controller.signal });
-                setServices(data.services);
-                setTotalPages(data.pages);
-            } catch (error) {
-                if (error.name !== 'CanceledError') {
-                    console.error('Failed to fetch services:', error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchServices();
-        return () => controller.abort();
-    }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+    const { services, pages: totalPages, loading } = useServices(params);
 
     /* Update a single filter key in URL */
     const handleFilterChange = (updates) => {

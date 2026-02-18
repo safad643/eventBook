@@ -16,6 +16,18 @@
   --color-primary-950: #1e1b4b;
 }
 
+/* Hide scrollbar globally while keeping scroll functionality */
+html,
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* Base resets */
 body {
   font-family: var(--font-sans);

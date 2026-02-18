@@ -1,24 +1,20 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import API from '../../api/axios';
+import { useCreateService } from '../../hooks';
 import ServiceForm from '../../components/admin/ServiceForm';
 
 export default function AdminCreateServicePage() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const { createService, loading } = useCreateService();
 
     const handleSubmit = async (formData) => {
-        setLoading(true);
         try {
-            await API.post('/admin/services', formData);
+            await createService(formData);
             toast.success('Service created successfully');
             navigate('/admin');
         } catch (error) {
             const msg = error.response?.data?.error || error.response?.data?.errors?.join(', ') || 'Failed to create service';
             toast.error(msg);
-        } finally {
-            setLoading(false);
         }
     };
 

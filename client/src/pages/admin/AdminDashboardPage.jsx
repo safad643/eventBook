@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import API from '../../api/axios';
+import { useAdminDashboard } from '../../hooks';
 import DashboardStats from '../../components/admin/DashboardStats';
 import AdminServiceCard from '../../components/admin/AdminServiceCard';
 import Spinner from '../../components/common/Spinner';
@@ -12,35 +11,10 @@ const STATUS_STYLES = {
 };
 
 export default function AdminDashboardPage() {
-    const [stats, setStats] = useState(null);
-    const [services, setServices] = useState([]);
-    const [recentBookings, setRecentBookings] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { stats, services, recentBookings, loading, refetch } = useAdminDashboard();
 
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchDashboard = async () => {
-            try {
-                const { data } = await API.get('/admin/dashboard', { signal: controller.signal });
-                setStats(data.stats);
-                setServices(data.services);
-                setRecentBookings(data.recentBookings);
-            } catch (error) {
-                if (error.name !== 'CanceledError') {
-                    console.error('Failed to load dashboard:', error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboard();
-        return () => controller.abort();
-    }, []);
-
-    const handleDeleteService = (serviceId) => {
-        setServices((prev) => prev.filter((s) => s._id !== serviceId));
+    const handleDeleteService = () => {
+        refetch();
     };
 
     if (loading) return <Spinner className="py-20" />;

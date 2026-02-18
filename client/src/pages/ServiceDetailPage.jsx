@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import toast from 'react-hot-toast';
 import { HiOutlineMapPin, HiOutlinePhone } from 'react-icons/hi2';
-import API from '../api/axios';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth, useService, useCreateBooking } from '../hooks';
 import BookingDatePicker from '../components/booking/BookingDatePicker';
 import Spinner from '../components/common/Spinner';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -26,37 +25,12 @@ export default function ServiceDetailPage() {
     const { id } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { service, loading, error } = useService(id);
+    const { createBooking, loading: booking } = useCreateBooking();
 
-    const [service, setService] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
-
-    /* Booking state */
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [booking, setBooking] = useState(false);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchService = async () => {
-            setLoading(true);
-            try {
-                const { data } = await API.get(`/services/${id}`, { signal: controller.signal });
-                setService(data.service);
-            } catch (err) {
-                if (err.name !== 'CanceledError') {
-                    setError(err.response?.data?.error || 'Service not found');
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchService();
-        return () => controller.abort();
-    }, [id]);
 
     /* Parse availability dates for the calendar */
     const availableDates = useMemo(
@@ -72,10 +46,8 @@ export default function ServiceDetailPage() {
 
     const handleBooking = async () => {
         if (!startDate || !endDate) return;
-
-        setBooking(true);
         try {
-            await API.post('/bookings', {
+            await createBooking({
                 serviceId: id,
                 startDate: startDate.toISOString().split('T')[0],
                 endDate: endDate.toISOString().split('T')[0],
@@ -85,8 +57,6 @@ export default function ServiceDetailPage() {
         } catch (err) {
             const msg = err.response?.data?.error || err.response?.data?.errors?.join(', ') || 'Booking failed';
             toast.error(msg);
-        } finally {
-            setBooking(false);
         }
     };
 

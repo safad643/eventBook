@@ -3,28 +3,26 @@ import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { HiOutlineMapPin, HiOutlinePencilSquare, HiOutlineTrash } from 'react-icons/hi2';
 import ConfirmModal from '../common/ConfirmModal';
-import API from '../../api/axios';
+import { useDeleteService } from '../../hooks';
 import toast from 'react-hot-toast';
 
 const PLACEHOLDER_IMG = 'https://placehold.co/400x250/e0e7ff/4f46e5?text=No+Image';
 
 export default function AdminServiceCard({ service, onDelete }) {
     const [showConfirm, setShowConfirm] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const { deleteService, loading: deleting } = useDeleteService();
 
     const image = service.images?.[0] || PLACEHOLDER_IMG;
 
     const handleDelete = async () => {
-        setDeleting(true);
         try {
-            await API.delete(`/admin/services/${service._id}`);
+            await deleteService(service._id);
             toast.success('Service deleted');
             onDelete(service._id);
         } catch (error) {
             const msg = error.response?.data?.error || 'Failed to delete service';
             toast.error(msg);
         } finally {
-            setDeleting(false);
             setShowConfirm(false);
         }
     };

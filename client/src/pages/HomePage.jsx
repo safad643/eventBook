@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineMagnifyingGlass, HiOutlineArrowRight } from 'react-icons/hi2';
+import { HiOutlineMagnifyingGlass, HiOutlineArrowRight, HiOutlineCalendarDays } from 'react-icons/hi2';
 import {
     HiOutlineBuildingOffice2,
     HiOutlineBuildingStorefront,
@@ -10,7 +10,8 @@ import {
     HiOutlineSparkles,
     HiOutlineEllipsisHorizontalCircle,
 } from 'react-icons/hi2';
-import API from '../api/axios';
+import { FaHandshake } from 'react-icons/fa';
+import { useServices } from '../hooks';
 import ServiceGrid from '../components/services/ServiceGrid';
 import Spinner from '../components/common/Spinner';
 
@@ -25,39 +26,15 @@ const CATEGORIES = [
 ];
 
 const STEPS = [
-    { title: 'Search Services', desc: 'Browse through hundreds of event service providers.', icon: '🔍' },
-    { title: 'Pick Your Dates', desc: 'Select the dates that work best for your event.', icon: '📅' },
-    { title: 'Book Instantly', desc: 'Confirm your booking and get ready for your event.', icon: '✨' },
+    { title: 'Search Services', desc: 'Browse through hundreds of event service providers.', icon: HiOutlineMagnifyingGlass },
+    { title: 'Pick Your Dates', desc: 'Select the dates that work best for your event.', icon: HiOutlineCalendarDays },
+    { title: 'Book Instantly', desc: 'Confirm your booking and get ready for your event.', icon: FaHandshake },
 ];
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState('');
-    const [featured, setFeatured] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        const fetchFeatured = async () => {
-            try {
-                const { data } = await API.get('/services', {
-                    params: { limit: 6, sort: '-createdAt' },
-                    signal: controller.signal,
-                });
-                setFeatured(data.services);
-            } catch (error) {
-                if (error.name !== 'CanceledError') {
-                    console.error('Failed to load featured services:', error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFeatured();
-        return () => controller.abort();
-    }, []);
+    const { services: featured, loading } = useServices({ limit: 6, sort: '-createdAt' });
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -114,7 +91,7 @@ export default function HomePage() {
                         <Link
                             key={value}
                             to={`/services?category=${value}`}
-                            className="flex flex-col items-center gap-3 rounded-lg border border-gray-200 p-4 transition-all hover:-translate-y-1 hover:shadow-md"
+                            className="flex flex-col items-center gap-3 rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md"
                         >
                             <div className={`rounded-lg p-3 ${color}`}>
                                 <Icon className="h-6 w-6" />
@@ -154,15 +131,18 @@ export default function HomePage() {
             <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
                 <h2 className="text-center text-2xl font-bold text-gray-900">How It Works</h2>
                 <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-3">
-                    {STEPS.map((step, i) => (
-                        <div key={i} className="text-center">
-                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-3xl">
-                                {step.icon}
+                    {STEPS.map((step, i) => {
+                        const Icon = step.icon;
+                        return (
+                            <div key={i} className="text-center">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
+                                    <Icon className="h-8 w-8 text-primary-600" />
+                                </div>
+                                <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
+                                <p className="mt-2 text-sm text-gray-600">{step.desc}</p>
                             </div>
-                            <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
-                            <p className="mt-2 text-sm text-gray-600">{step.desc}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </section>
 
