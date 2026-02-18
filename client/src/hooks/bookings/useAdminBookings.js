@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
-import API from '../api/axios';
+import API from '../../api/axios';
 
 /**
- * Fetches the current user's bookings.
+ * Fetches admin bookings (bookings on current admin's services).
  * @returns {{ bookings: Array, loading: boolean, error: string|null, refetch: function }}
  */
-export function useBookings() {
+export function useAdminBookings() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const fetchBookings = useCallback(async (signal) => {
         try {
-            const { data } = await API.get('/bookings', { signal });
+            const { data } = await API.get('/admin/bookings', { signal });
             setBookings(data.bookings ?? []);
         } catch (err) {
             if (err.name !== 'CanceledError') {

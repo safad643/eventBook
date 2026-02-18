@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks';
 import Spinner from '../components/common/Spinner';
 
 export default function LoginPage() {

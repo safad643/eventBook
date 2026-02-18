@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks';
 
 const linkBase = 'text-sm font-medium transition-colors';
 const activeClass = 'text-primary-600';
