@@ -1,5 +1,8 @@
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const sendEmail = require('../utils/sendEmail');
 
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -14,22 +17,107 @@ const cookieOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+/**
+ * Generate a 6-digit OTP string.
+ */
+const generateOtp = () => {
+    return crypto.randomInt(100000, 999999).toString();
+};
+
+/**
+ * Hash, store, and email an OTP to the given user.
+ */
+const sendOtpToUser = async (user) => {
+    const otp = generateOtp();
+    user.otp = await bcrypt.hash(otp, 10);
+    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    await user.save({ validateModifiedOnly: true });
+
+    await sendEmail({
+        to: user.email,
+        subject: 'EventBook – Verify Your Email',
+        html: `<p>Your verification code is: <strong>${otp}</strong></p><p>This code expires in 10 minutes.</p>`,
+    });
+};
+
 const register = async (req, res) => {
     const { name, email, password, role } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingUser = await User.findOne({ email }).select('+otp +otpExpiry');
+
+    if (existingUser && existingUser.isVerified) {
         res.status(400).json({ success: false, error: 'Email already registered' });
         return;
     }
 
+    // If unverified user exists, resend OTP instead of creating a duplicate
+    if (existingUser && !existingUser.isVerified) {
+        await sendOtpToUser(existingUser);
+        res.status(200).json({ success: true, message: 'OTP sent to your email' });
+        return;
+    }
+
     const user = await User.create({ name, email, password, role });
+    await sendOtpToUser(user);
+
+    res.status(201).json({ success: true, message: 'OTP sent to your email' });
+};
+
+const verifyOtp = async (req, res) => {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email }).select('+otp +otpExpiry');
+    if (!user) {
+        res.status(400).json({ success: false, error: 'User not found' });
+        return;
+    }
+
+    if (user.isVerified) {
+        res.status(400).json({ success: false, error: 'Email is already verified' });
+        return;
+    }
+
+    if (!user.otp || !user.otpExpiry || user.otpExpiry < Date.now()) {
+        res.status(400).json({ success: false, error: 'OTP has expired, please request a new one' });
+        return;
+    }
+
+    const isMatch = await bcrypt.compare(otp, user.otp);
+    if (!isMatch) {
+        res.status(400).json({ success: false, error: 'Invalid OTP' });
+        return;
+    }
+
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save({ validateModifiedOnly: true });
+
     const token = generateToken(user);
 
-    res.status(201).cookie('token', token, cookieOptions).json({
+    res.status(200).cookie('token', token, cookieOptions).json({
         success: true,
         user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
+};
+
+const resendOtp = async (req, res) => {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email }).select('+otp +otpExpiry');
+    if (!user) {
+        res.status(400).json({ success: false, error: 'User not found' });
+        return;
+    }
+
+    if (user.isVerified) {
+        res.status(400).json({ success: false, error: 'Email is already verified' });
+        return;
+    }
+
+    await sendOtpToUser(user);
+
+    res.status(200).json({ success: true, message: 'OTP resent to your email' });
 };
 
 const login = async (req, res) => {
@@ -38,6 +126,11 @@ const login = async (req, res) => {
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
         res.status(401).json({ success: false, error: 'Invalid credentials' });
+        return;
+    }
+
+    if (!user.isVerified) {
+        res.status(403).json({ success: false, error: 'Please verify your email first' });
         return;
     }
 
@@ -74,4 +167,4 @@ const logout = (req, res) => {
     res.clearCookie('token').json({ success: true, message: 'Logged out' });
 };
 
-module.exports = { register, login, getMe, logout };
+module.exports = { register, verifyOtp, resendOtp, login, getMe, logout };

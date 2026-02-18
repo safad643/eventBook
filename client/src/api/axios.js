@@ -15,7 +15,7 @@ API.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             const path = window.location.pathname;
-            const isAuthPage = path === '/login' || path === '/register';
+            const isAuthPage = path === '/login' || path === '/register' || path === '/verify-otp';
 
             if (!isAuthPage) {
                 window.location.href = '/login';

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, logout } = require('../controllers/authController');
+const { register, verifyOtp, resendOtp, login, getMe, logout } = require('../controllers/authController');
 const verifyToken = require('../middleware/auth');
 const validate = require('../middleware/validate');
-const { registerSchema, loginSchema } = require('../validators/authValidator');
+const { registerSchema, loginSchema, verifyOtpSchema, resendOtpSchema } = require('../validators/authValidator');
 
 /**
  * @swagger
@@ -16,7 +16,7 @@ const { registerSchema, loginSchema } = require('../validators/authValidator');
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register a new user (sends OTP to email)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -39,11 +39,65 @@ const { registerSchema, loginSchema } = require('../validators/authValidator');
  *                 enum: [user, admin]
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: OTP sent to email
  *       400:
  *         description: Validation error or email already registered
  */
 router.post('/register', validate(registerSchema), register);
+
+/**
+ * @swagger
+ * /auth/verify-otp:
+ *   post:
+ *     summary: Verify email with OTP
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, otp]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 6
+ *     responses:
+ *       200:
+ *         description: Email verified, user logged in
+ *       400:
+ *         description: Invalid or expired OTP
+ */
+router.post('/verify-otp', validate(verifyOtpSchema), verifyOtp);
+
+/**
+ * @swagger
+ * /auth/resend-otp:
+ *   post:
+ *     summary: Resend OTP to email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: OTP resent
+ *       400:
+ *         description: User not found or already verified
+ */
+router.post('/resend-otp', validate(resendOtpSchema), resendOtp);
 
 /**
  * @swagger
@@ -69,6 +123,8 @@ router.post('/register', validate(registerSchema), register);
  *         description: Login successful
  *       401:
  *         description: Invalid credentials
+ *       403:
+ *         description: Email not verified
  */
 router.post('/login', validate(loginSchema), login);
 

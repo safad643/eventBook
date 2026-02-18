@@ -6,13 +6,15 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 6, select: false },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    isVerified: { type: Boolean, default: false },
+    otp: { type: String, select: false },
+    otpExpiry: { type: Date, select: false },
     createdAt: { type: Date, default: Date.now },
 });
 
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
     this.password = await bcrypt.hash(this.password, 10);
-    next();
 });
 
 userSchema.methods.comparePassword = async function (candidatePassword) {

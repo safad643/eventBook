@@ -16,6 +16,7 @@ import RegisterPage from '@/pages/RegisterPage';
 import ServicesPage from '@/pages/ServicesPage';
 import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import NotFoundPage from '@/pages/NotFoundPage';
+import VerifyOtpPage from '@/pages/VerifyOtpPage';
 
 /* Protected pages */
 import MyBookingsPage from '@/pages/MyBookingsPage';
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-otp" element={<VerifyOtpPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:id" element={<ServiceDetailPage />} />
 

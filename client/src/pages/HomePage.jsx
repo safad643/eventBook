@@ -63,7 +63,7 @@ export default function HomePage() {
                                 value={keyword}
                                 onChange={(e) => setKeyword(e.target.value)}
                                 placeholder="Search venues, caterers, DJs…"
-                                className="w-full rounded-lg py-3 pr-4 pl-10 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-300 focus:outline-none"
+                                className="w-full rounded-lg border-2 border-white/40 bg-white py-3 pr-4 pl-10 text-gray-900 placeholder-gray-400 focus:border-white/60 focus:ring-2 focus:ring-primary-300 focus:outline-none"
                             />
                         </div>
                         <button

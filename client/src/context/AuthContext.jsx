@@ -5,16 +5,7 @@ import API from '@/api/axios';
 
 export const AuthContext = createContext(null);
 
-/**
- * Extracts a user-friendly error message from an API error response.
- */
-const getErrorMessage = (error) => {
-    return (
-        error.response?.data?.error ||
-        error.response?.data?.errors?.join(', ') ||
-        'Something went wrong'
-    );
-};
+
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -48,12 +39,21 @@ export function AuthProvider({ children }) {
     };
 
     const register = async (name, email, password, role) => {
-        const { data } = await API.post('/auth/register', { name, email, password, role });
-        setUser(data.user);
-        toast.success('Account created successfully');
+        await API.post('/auth/register', { name, email, password, role });
+        toast.success('OTP sent to your email');
+        navigate('/verify-otp', { state: { email } });
+    };
 
-        const redirectTo = location.state?.from?.pathname || '/';
-        navigate(redirectTo, { replace: true });
+    const verifyOtp = async (email, otp) => {
+        const { data } = await API.post('/auth/verify-otp', { email, otp });
+        setUser(data.user);
+        toast.success('Email verified successfully');
+        navigate('/', { replace: true });
+    };
+
+    const resendOtp = async (email) => {
+        await API.post('/auth/resend-otp', { email });
+        toast.success('OTP resent to your email');
     };
 
     const logout = async () => {
@@ -63,7 +63,7 @@ export function AuthProvider({ children }) {
         navigate('/', { replace: true });
     };
 
-    const value = { user, loading, login, register, logout };
+    const value = { user, loading, login, register, verifyOtp, resendOtp, logout };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

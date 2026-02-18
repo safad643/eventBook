@@ -2,6 +2,11 @@ const errorHandler = (err, req, res, next) => {
     let statusCode = err.statusCode || 500;
     let message = err.message || 'Server error';
 
+    console.error(`[Error] ${req.method} ${req.originalUrl} - ${statusCode} - ${message}`);
+    if (err && err.stack) {
+        console.error(err.stack);
+    }
+
     if (err.name === 'CastError') {
         statusCode = 400;
         message = 'Invalid ID format';
