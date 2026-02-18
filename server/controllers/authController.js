@@ -1,8 +1,7 @@
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const sendEmail = require('../utils/sendEmail');
+const { sendOtpToUser } = require('../utils/sendEmail');
 
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -15,29 +14,6 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-};
-
-/**
- * Generate a 6-digit OTP string.
- */
-const generateOtp = () => {
-    return crypto.randomInt(100000, 999999).toString();
-};
-
-/**
- * Hash, store, and email an OTP to the given user.
- */
-const sendOtpToUser = async (user) => {
-    const otp = generateOtp();
-    user.otp = await bcrypt.hash(otp, 10);
-    user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    await user.save({ validateModifiedOnly: true });
-
-    await sendEmail({
-        to: user.email,
-        subject: 'EventBook – Verify Your Email',
-        html: `<p>Your verification code is: <strong>${otp}</strong></p><p>This code expires in 10 minutes.</p>`,
-    });
 };
 
 const register = async (req, res) => {
