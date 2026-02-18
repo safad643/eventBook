@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createService, updateService, deleteService, getAdminBookings } = require('../controllers/adminController');
+const { createService, updateService, deleteService, getAdminBookings, getDashboard } = require('../controllers/adminController');
 const verifyToken = require('../middleware/auth');
 const authorize = require('../middleware/role');
 const validate = require('../middleware/validate');
@@ -155,5 +155,19 @@ router.delete('/services/:id', verifyToken, authorize('admin'), deleteService);
  *         description: List of bookings for admin's services
  */
 router.get('/bookings', verifyToken, authorize('admin'), getAdminBookings);
+
+/**
+ * @swagger
+ * /admin/dashboard:
+ *   get:
+ *     summary: Get admin dashboard data (stats, services, recent bookings)
+ *     tags: [Admin]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data
+ */
+router.get('/dashboard', verifyToken, authorize('admin'), getDashboard);
 
 module.exports = router;

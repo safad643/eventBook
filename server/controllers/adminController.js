@@ -98,4 +98,34 @@ const getAdminBookings = async (req, res) => {
     res.status(200).json({ success: true, count: bookings.length, bookings });
 };
 
-module.exports = { createService, updateService, deleteService, getAdminBookings };
+const getDashboard = async (req, res) => {
+    const services = await Service.find({ admin: req.user.id });
+    const serviceIds = services.map((s) => s._id);
+
+    const bookings = await Booking.find({ service: { $in: serviceIds } });
+
+    const confirmedBookings = bookings.filter((b) => b.status === 'confirmed');
+    const cancelledBookings = bookings.filter((b) => b.status === 'cancelled');
+    const totalRevenue = confirmedBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+
+    const recentBookings = await Booking.find({ service: { $in: serviceIds } })
+        .populate('user', 'name email')
+        .populate('service', 'title category')
+        .sort('-createdAt')
+        .limit(5);
+
+    res.status(200).json({
+        success: true,
+        stats: {
+            totalServices: services.length,
+            totalBookings: bookings.length,
+            confirmedBookings: confirmedBookings.length,
+            cancelledBookings: cancelledBookings.length,
+            totalRevenue,
+        },
+        services,
+        recentBookings,
+    });
+};
+
+module.exports = { createService, updateService, deleteService, getAdminBookings, getDashboard };
