@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { HiOutlineBars3, HiOutlineXMark } from 'react-icons/hi2';
+import { HiOutlineBars3, HiOutlineXMark, HiArrowRightStartOnRectangle } from 'react-icons/hi2';
 import { useAuth } from '@/hooks';
 
 const linkBase = 'text-sm font-medium transition-colors';
 const activeClass = 'text-primary-600';
 const inactiveClass = 'text-gray-600 hover:text-gray-900';
+
+function UserAvatar({ name }) {
+    const initial = name?.charAt(0)?.toUpperCase() || '?';
+    return (
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-sm font-semibold text-white shadow-sm">
+            {initial}
+        </div>
+    );
+}
 
 export default function Navbar() {
     const { user, logout } = useAuth();
@@ -45,18 +54,16 @@ export default function Navbar() {
                     ))}
 
                     {user ? (
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm text-gray-700">{user.name}</span>
-                            {user.role === 'admin' && (
-                                <span className="rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
-                                    Admin
-                                </span>
-                            )}
+                        <div className="flex items-center gap-2.5 rounded-full border border-gray-200 py-1.5 pl-1.5 pr-3 shadow-sm">
+                            <UserAvatar name={user.name} />
+                            <span className="text-sm font-medium text-gray-800">{user.name}</span>
+                            <div className="mx-0.5 h-4 w-px bg-gray-200" />
                             <button
                                 onClick={handleLogout}
-                                className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                                className="rounded-full p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                                title="Logout"
                             >
-                                Logout
+                                <HiArrowRightStartOnRectangle className="h-4.5 w-4.5" />
                             </button>
                         </div>
                     ) : (
@@ -105,22 +112,21 @@ export default function Navbar() {
                         ))}
 
                         {user ? (
-                            <>
-                                <div className="mt-2 flex items-center gap-2 border-t border-gray-100 px-3 pt-3">
-                                    <span className="text-sm text-gray-700">{user.name}</span>
-                                    {user.role === 'admin' && (
-                                        <span className="rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
-                                            Admin
-                                        </span>
-                                    )}
+                            <div className="mt-2 border-t border-gray-100 pt-3">
+                                <div className="flex items-center justify-between px-3">
+                                    <div className="flex items-center gap-2.5">
+                                        <UserAvatar name={user.name} />
+                                        <span className="text-sm font-medium text-gray-800">{user.name}</span>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                                        title="Logout"
+                                    >
+                                        <HiArrowRightStartOnRectangle className="h-5 w-5" />
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={handleLogout}
-                                    className="mt-1 rounded-lg bg-gray-100 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
-                                >
-                                    Logout
-                                </button>
-                            </>
+                            </div>
                         ) : (
                             <div className="mt-2 flex flex-col gap-2 border-t border-gray-100 pt-3">
                                 <Link
