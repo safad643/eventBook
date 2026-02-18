@@ -1,6 +1,3 @@
-const User = require('../models/User');
-const sendEmail = require('../utils/sendEmail');
-
 const getDatesBetween = (start, end) => {
     const dates = [];
     const current = new Date(start);
@@ -40,31 +37,10 @@ const removeDatesFromService = async (service, requestedDates) => {
     await service.save();
 };
 
-const sendBookingEmail = async (userId, booking, start, end, totalDays, totalPrice) => {
-    try {
-        const user = await User.findById(userId);
-        await sendEmail({
-            to: user.email,
-            subject: 'Booking Confirmation — Event Booking Platform',
-            html: `
-                <h2>Booking Confirmed!</h2>
-                <p><strong>Service:</strong> ${booking.service.title}</p>
-                <p><strong>Dates:</strong> ${toDateString(start)} to ${toDateString(end)}</p>
-                <p><strong>Total Days:</strong> ${totalDays}</p>
-                <p><strong>Total Price:</strong> ₹${totalPrice}</p>
-                <p><strong>Status:</strong> Confirmed</p>
-            `,
-        });
-    } catch (emailError) {
-        console.error('Booking email failed:', emailError.message);
-    }
-};
-
 module.exports = {
     getDatesBetween,
     toDateString,
     normalizeDates,
     checkAvailability,
     removeDatesFromService,
-    sendBookingEmail,
 };

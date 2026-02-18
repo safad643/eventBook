@@ -5,8 +5,8 @@ const {
     normalizeDates,
     checkAvailability,
     removeDatesFromService,
-    sendBookingEmail,
 } = require('../util/bookingHelpers');
+const { sendBookingEmail } = require('../utils/sendEmail');
 
 const createBooking = async (req, res) => {
     const { serviceId, startDate, endDate } = req.body;
@@ -46,7 +46,8 @@ const createBooking = async (req, res) => {
     });
 
     await booking.populate('service', 'title');
-    await sendBookingEmail(req.user.id, booking, start, end, totalDays, totalPrice);
+    // Fire-and-forget email so response isn't blocked by SMTP latency
+    sendBookingEmail(req.user.id, booking, start, end, totalDays, totalPrice);
 
     res.status(201).json({ success: true, booking });
 };

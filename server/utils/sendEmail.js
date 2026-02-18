@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const transporter = require('../config/nodemailer');
+const User = require('../models/User');
 
 const sendEmail = async ({ to, subject, html }) => {
     await transporter.sendMail({
@@ -24,5 +25,26 @@ const sendOtpToUser = async (user) => {
     });
 };
 
+const sendBookingEmail = async (userId, booking, start, end, totalDays, totalPrice) => {
+    try {
+        const user = await User.findById(userId);
+        await sendEmail({
+            to: user.email,
+            subject: 'Booking Confirmation — Event Booking Platform',
+            html: `
+                <h2>Booking Confirmed!</h2>
+                <p><strong>Service:</strong> ${booking.service.title}</p>
+                <p><strong>Dates:</strong> ${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}</p>
+                <p><strong>Total Days:</strong> ${totalDays}</p>
+                <p><strong>Total Price:</strong> ₹${totalPrice}</p>
+                <p><strong>Status:</strong> Confirmed</p>
+            `,
+        });
+    } catch (emailError) {
+        console.error('Booking email failed:', emailError.message);
+    }
+};
+
 module.exports = sendEmail;
 module.exports.sendOtpToUser = sendOtpToUser;
+module.exports.sendBookingEmail = sendBookingEmail;
