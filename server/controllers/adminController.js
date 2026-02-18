@@ -108,11 +108,30 @@ const getDashboard = async (req, res) => {
     const cancelledBookings = bookings.filter((b) => b.status === 'cancelled');
     const totalRevenue = confirmedBookings.reduce((sum, b) => sum + b.totalPrice, 0);
 
-    const recentBookings = await Booking.find({ service: { $in: serviceIds } })
-        .populate('user', 'name email')
-        .populate('service', 'title category')
-        .sort('-createdAt')
-        .limit(5);
+    // Build chart data — last 6 months of bookings & revenue
+    const now = new Date();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const chartData = [];
+
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+
+        const monthBookings = bookings.filter((b) => {
+            const created = new Date(b.createdAt);
+            return created >= date && created < nextMonth;
+        });
+
+        const monthRevenue = monthBookings
+            .filter((b) => b.status === 'confirmed')
+            .reduce((sum, b) => sum + b.totalPrice, 0);
+
+        chartData.push({
+            month: `${monthNames[date.getMonth()]} ${date.getFullYear()}`,
+            bookings: monthBookings.length,
+            revenue: monthRevenue,
+        });
+    }
 
     res.status(200).json({
         success: true,
@@ -124,7 +143,7 @@ const getDashboard = async (req, res) => {
             totalRevenue,
         },
         services,
-        recentBookings,
+        chartData,
     });
 };
 

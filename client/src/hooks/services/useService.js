@@ -24,12 +24,10 @@ export function useService(id) {
             const { data } = await API.get(`/services/${id}`, { signal });
             setService(data.service);
         } catch (err) {
-            if (err.name !== 'CanceledError') {
-                setError(err.response?.data?.error || 'Service not found');
-            }
-        } finally {
-            setLoading(false);
+            if (err.name === 'CanceledError') return;
+            setError(err.response?.data?.error || 'Service not found');
         }
+        setLoading(false);
     }, [id]);
 
     useEffect(() => {

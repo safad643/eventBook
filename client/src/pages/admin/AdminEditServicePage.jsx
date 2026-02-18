@@ -16,14 +16,14 @@ export default function AdminEditServicePage() {
         if (!service || !user) return;
         if (service.admin?._id !== user?.id) {
             toast.error('Not authorized to edit this service');
-            navigate('/admin', { replace: true });
+            navigate('/admin/services', { replace: true });
         }
     }, [service, user, navigate]);
 
     useEffect(() => {
         if (!loading && id && !service && user) {
             toast.error('Service not found');
-            navigate('/admin', { replace: true });
+            navigate('/admin/services', { replace: true });
         }
     }, [loading, id, service, user, navigate]);
 
@@ -31,7 +31,7 @@ export default function AdminEditServicePage() {
         try {
             await updateService(id, formData);
             toast.success('Service updated successfully');
-            navigate('/admin');
+            navigate('/admin/services');
         } catch (error) {
             const msg = error.response?.data?.error || error.response?.data?.errors?.join(', ') || 'Failed to update service';
             toast.error(msg);

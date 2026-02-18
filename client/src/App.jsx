@@ -26,6 +26,7 @@ import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminCreateServicePage from '@/pages/admin/AdminCreateServicePage';
 import AdminEditServicePage from '@/pages/admin/AdminEditServicePage';
 import AdminBookingsPage from '@/pages/admin/AdminBookingsPage';
+import AdminServicesPage from '@/pages/admin/AdminServicesPage';
 
 export default function App() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
         <Route element={<AdminRoute />}>
           <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/services" element={<AdminServicesPage />} />
             <Route path="/admin/services/create" element={<AdminCreateServicePage />} />
             <Route path="/admin/services/:id/edit" element={<AdminEditServicePage />} />
             <Route path="/admin/bookings" element={<AdminBookingsPage />} />

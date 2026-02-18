@@ -1,10 +1,10 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { HiOutlineSquares2X2, HiOutlinePlusCircle, HiOutlineClipboardDocumentList } from 'react-icons/hi2';
+import { HiOutlineSquares2X2, HiOutlineBriefcase, HiOutlineClipboardDocumentList } from 'react-icons/hi2';
 import Navbar from '@/components/common/Navbar';
 
 const sidebarLinks = [
     { to: '/admin', label: 'Dashboard', icon: HiOutlineSquares2X2, end: true },
-    { to: '/admin/services/create', label: 'Create Service', icon: HiOutlinePlusCircle },
+    { to: '/admin/services', label: 'Services', icon: HiOutlineBriefcase },
     { to: '/admin/bookings', label: 'Bookings', icon: HiOutlineClipboardDocumentList },
 ];
 

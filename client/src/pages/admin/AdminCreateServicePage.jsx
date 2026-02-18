@@ -11,7 +11,7 @@ export default function AdminCreateServicePage() {
         try {
             await createService(formData);
             toast.success('Service created successfully');
-            navigate('/admin');
+            navigate('/admin/services');
         } catch (error) {
             const msg = error.response?.data?.error || error.response?.data?.errors?.join(', ') || 'Failed to create service';
             toast.error(msg);

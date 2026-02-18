@@ -19,3 +19,4 @@ export { useCancelBooking } from '@/hooks/bookings/useCancelBooking';
 
 // Admin
 export { useAdminDashboard } from '@/hooks/admin/useAdminDashboard';
+export { useAdminServices } from '@/hooks/admin/useAdminServices';

@@ -2,13 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import API from '@/api/axios';
 
 /**
- * Fetches admin dashboard data (stats, services, recent bookings).
- * @returns {{ stats: Object|null, services: Array, recentBookings: Array, loading: boolean, error: string|null, refetch: function }}
+ * Fetches admin dashboard data (stats, chart data).
+ * @returns {{ stats: Object|null, chartData: Array, loading: boolean, error: string|null, refetch: function }}
  */
 export function useAdminDashboard() {
     const [stats, setStats] = useState(null);
-    const [services, setServices] = useState([]);
-    const [recentBookings, setRecentBookings] = useState([]);
+    const [chartData, setChartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -16,8 +15,7 @@ export function useAdminDashboard() {
         try {
             const { data } = await API.get('/admin/dashboard', { signal });
             setStats(data.stats ?? null);
-            setServices(data.services ?? []);
-            setRecentBookings(data.recentBookings ?? []);
+            setChartData(data.chartData ?? []);
         } catch (err) {
             if (err.name !== 'CanceledError') {
                 setError(err.response?.data?.error || 'Failed to load dashboard');
@@ -38,5 +36,6 @@ export function useAdminDashboard() {
         fetchDashboard(null);
     }, [fetchDashboard]);
 
-    return { stats, services, recentBookings, loading, error, refetch };
+    return { stats, chartData, loading, error, refetch };
 }
+
