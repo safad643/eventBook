@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import API from '../../api/axios';
-import { useAsyncMutation } from '../helpers/useAsyncMutation';
+import API from '@/api/axios';
+import { useAsyncMutation } from '@/hooks/helpers/useAsyncMutation';
 
 /**
  * Create a new service (admin). Returns createService(formData) and loading state.

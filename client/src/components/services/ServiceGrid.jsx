@@ -1,4 +1,4 @@
-import ServiceCard from './ServiceCard';
+import ServiceCard from '@/components/services/ServiceCard';
 
 export default function ServiceGrid({ services }) {
     if (!services?.length) {

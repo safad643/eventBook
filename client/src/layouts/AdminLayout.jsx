@@ -7,7 +7,7 @@ import {
     HiOutlineArrowLeftOnRectangle,
     HiOutlineBars3,
 } from 'react-icons/hi2';
-import Navbar from '../components/common/Navbar';
+import Navbar from '@/components/common/Navbar';
 
 const sidebarLinks = [
     { to: '/admin', label: 'Dashboard', icon: HiOutlineSquares2X2, end: true },

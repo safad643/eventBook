@@ -1,6 +1,6 @@
-import { useAdminBookings } from '../../hooks';
-import AdminBookingTable from '../../components/admin/AdminBookingTable';
-import Spinner from '../../components/common/Spinner';
+import { useAdminBookings } from '@/hooks';
+import AdminBookingTable from '@/components/admin/AdminBookingTable';
+import Spinner from '@/components/common/Spinner';
 
 export default function AdminBookingsPage() {
     const { bookings, loading } = useAdminBookings();

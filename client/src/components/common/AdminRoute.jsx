@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../hooks';
+import { useAuth } from '@/hooks';
 
 export default function AdminRoute() {
     const { user } = useAuth();

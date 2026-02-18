@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useServices } from '../hooks';
-import ServiceFilters from '../components/services/ServiceFilters';
-import ServiceGrid from '../components/services/ServiceGrid';
-import Pagination from '../components/common/Pagination';
-import Spinner from '../components/common/Spinner';
+import { useServices } from '@/hooks';
+import ServiceFilters from '@/components/services/ServiceFilters';
+import ServiceGrid from '@/components/services/ServiceGrid';
+import Pagination from '@/components/common/Pagination';
+import Spinner from '@/components/common/Spinner';
 
 const FILTER_KEYS = ['keyword', 'category', 'location', 'minPrice', 'maxPrice', 'date', 'sort'];
 

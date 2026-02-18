@@ -1,11 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import App from './App';
-import './index.css';
-import Spinner from './components/common/Spinner';
-import { useAuth } from './hooks';
+import { AuthProvider } from '@/context/AuthContext';
+import App from '@/App';
+import '@/index.css';
+import Spinner from '@/components/common/Spinner';
+import { useAuth } from '@/hooks';
 
 /**
  * Wrapper that shows a full-screen spinner while auth status is loading.

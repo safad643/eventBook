@@ -11,9 +11,9 @@ import {
     HiOutlineEllipsisHorizontalCircle,
 } from 'react-icons/hi2';
 import { FaHandshake } from 'react-icons/fa';
-import { useServices } from '../hooks';
-import ServiceGrid from '../components/services/ServiceGrid';
-import Spinner from '../components/common/Spinner';
+import { useServices } from '@/hooks';
+import ServiceGrid from '@/components/services/ServiceGrid';
+import Spinner from '@/components/common/Spinner';
 
 const CATEGORIES = [
     { value: 'venue', label: 'Venues', icon: HiOutlineBuildingOffice2, color: 'bg-purple-50 text-purple-600' },

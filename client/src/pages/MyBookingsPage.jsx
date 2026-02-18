@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useBookings } from '../hooks';
-import BookingCard from '../components/booking/BookingCard';
-import Spinner from '../components/common/Spinner';
+import { useBookings } from '@/hooks';
+import BookingCard from '@/components/booking/BookingCard';
+import Spinner from '@/components/common/Spinner';
 
 const TABS = ['all', 'confirmed', 'cancelled'];
 

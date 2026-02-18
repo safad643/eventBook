@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import API from '../../api/axios';
+import API from '@/api/axios';
 
 /**
  * Fetches admin dashboard data (stats, services, recent bookings).

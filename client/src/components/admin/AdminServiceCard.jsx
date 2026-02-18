@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { HiOutlineMapPin, HiOutlinePencilSquare, HiOutlineTrash } from 'react-icons/hi2';
-import ConfirmModal from '../common/ConfirmModal';
-import { useDeleteService } from '../../hooks';
+import ConfirmModal from '@/components/common/ConfirmModal';
+import { useDeleteService } from '@/hooks';
 import toast from 'react-hot-toast';
 
 const PLACEHOLDER_IMG = 'https://placehold.co/400x250/e0e7ff/4f46e5?text=No+Image';

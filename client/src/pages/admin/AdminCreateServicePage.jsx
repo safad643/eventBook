@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useCreateService } from '../../hooks';
-import ServiceForm from '../../components/admin/ServiceForm';
+import { useCreateService } from '@/hooks';
+import ServiceForm from '@/components/admin/ServiceForm';
 
 export default function AdminCreateServicePage() {
     const navigate = useNavigate();

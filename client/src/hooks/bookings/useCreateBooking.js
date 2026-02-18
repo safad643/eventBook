@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import API from '../../api/axios';
-import { useAsyncMutation } from '../helpers/useAsyncMutation';
+import API from '@/api/axios';
+import { useAsyncMutation } from '@/hooks/helpers/useAsyncMutation';
 
 /**
  * Create a booking. Payload: { serviceId, startDate, endDate }.

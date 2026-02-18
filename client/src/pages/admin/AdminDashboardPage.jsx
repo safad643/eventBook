@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { useAdminDashboard } from '../../hooks';
-import DashboardStats from '../../components/admin/DashboardStats';
-import AdminServiceCard from '../../components/admin/AdminServiceCard';
-import Spinner from '../../components/common/Spinner';
+import { useAdminDashboard } from '@/hooks';
+import DashboardStats from '@/components/admin/DashboardStats';
+import AdminServiceCard from '@/components/admin/AdminServiceCard';
+import Spinner from '@/components/common/Spinner';
 
 const STATUS_STYLES = {
     confirmed: 'bg-green-100 text-green-700',

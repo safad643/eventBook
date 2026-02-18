@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { useAuth, useService, useUpdateService } from '../../hooks';
-import ServiceForm from '../../components/admin/ServiceForm';
-import Spinner from '../../components/common/Spinner';
+import { useAuth, useService, useUpdateService } from '@/hooks';
+import ServiceForm from '@/components/admin/ServiceForm';
+import Spinner from '@/components/common/Spinner';
 
 export default function AdminEditServicePage() {
     const { id } = useParams();

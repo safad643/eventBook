@@ -4,9 +4,9 @@ import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import toast from 'react-hot-toast';
 import { HiOutlineMapPin, HiOutlinePhone } from 'react-icons/hi2';
-import { useAuth, useService, useCreateBooking } from '../hooks';
-import BookingDatePicker from '../components/booking/BookingDatePicker';
-import Spinner from '../components/common/Spinner';
+import { useAuth, useService, useCreateBooking } from '@/hooks';
+import BookingDatePicker from '@/components/booking/BookingDatePicker';
+import Spinner from '@/components/common/Spinner';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const CATEGORY_COLORS = {

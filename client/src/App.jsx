@@ -2,29 +2,29 @@ import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 /* Layouts */
-import MainLayout from './layouts/MainLayout';
-import AdminLayout from './layouts/AdminLayout';
+import MainLayout from '@/layouts/MainLayout';
+import AdminLayout from '@/layouts/AdminLayout';
 
 /* Route guards */
-import ProtectedRoute from './components/common/ProtectedRoute';
-import AdminRoute from './components/common/AdminRoute';
+import ProtectedRoute from '@/components/common/ProtectedRoute';
+import AdminRoute from '@/components/common/AdminRoute';
 
 /* Public pages */
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ServicesPage from './pages/ServicesPage';
-import ServiceDetailPage from './pages/ServiceDetailPage';
-import NotFoundPage from './pages/NotFoundPage';
+import HomePage from '@/pages/HomePage';
+import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import ServicesPage from '@/pages/ServicesPage';
+import ServiceDetailPage from '@/pages/ServiceDetailPage';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 /* Protected pages */
-import MyBookingsPage from './pages/MyBookingsPage';
+import MyBookingsPage from '@/pages/MyBookingsPage';
 
 /* Admin pages */
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminCreateServicePage from './pages/admin/AdminCreateServicePage';
-import AdminEditServicePage from './pages/admin/AdminEditServicePage';
-import AdminBookingsPage from './pages/admin/AdminBookingsPage';
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminCreateServicePage from '@/pages/admin/AdminCreateServicePage';
+import AdminEditServicePage from '@/pages/admin/AdminEditServicePage';
+import AdminBookingsPage from '@/pages/admin/AdminBookingsPage';
 
 export default function App() {
   return (
