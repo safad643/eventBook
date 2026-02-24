@@ -8,7 +8,12 @@ cloudinary.config({
     api_secret: env.CLOUDINARY_API_SECRET,
 });
 
-export const upload = multer({ storage: multer.memoryStorage() });
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
+export const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: MAX_FILE_SIZE_BYTES },
+});
 
 export const uploadToCloudinary = (fileBuffer: Buffer, folder = 'event-booking'): Promise<any> => {
     return new Promise((resolve, reject) => {
