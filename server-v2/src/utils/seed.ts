@@ -22,7 +22,14 @@ const generateDates = (daysFromNow: number, count: number): Date[] => {
 };
 
 const seed = async (): Promise<void> => {
-    await mongoose.connect(process.env.MONGO_URI!);
+    await mongoose.connect(process.env.MONGO_URI!, {
+        connectTimeoutMS: 10_000,
+        serverSelectionTimeoutMS: 10_000,
+        socketTimeoutMS: 45_000,
+        maxPoolSize: 10,
+        minPoolSize: 1,
+        retryWrites: true,
+    });
     console.log('Connected to MongoDB');
 
     await User.deleteMany({});

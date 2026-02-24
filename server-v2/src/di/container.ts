@@ -23,18 +23,18 @@ import { AdminController } from '../controllers/AdminController.js';
 
 const container = new Container();
 
-// Bind repositories
-container.bind<IUserRepository>(TYPES.IUserRepository).to(UserRepository);
-container.bind<IServiceRepository>(TYPES.IServiceRepository).to(ServiceRepository);
-container.bind<IBookingRepository>(TYPES.IBookingRepository).to(BookingRepository);
+// Bind repositories (singleton: one pool of DB connections, shared state)
+container.bind<IUserRepository>(TYPES.IUserRepository).to(UserRepository).inSingletonScope();
+container.bind<IServiceRepository>(TYPES.IServiceRepository).to(ServiceRepository).inSingletonScope();
+container.bind<IBookingRepository>(TYPES.IBookingRepository).to(BookingRepository).inSingletonScope();
 
-// Bind services
-container.bind<AuthService>(TYPES.AuthService).to(AuthService);
-container.bind<ServiceService>(TYPES.ServiceService).to(ServiceService);
-container.bind<BookingService>(TYPES.BookingService).to(BookingService);
-container.bind<AdminService>(TYPES.AdminService).to(AdminService);
+// Bind services (singleton: shared caches, consistent behavior)
+container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
+container.bind<ServiceService>(TYPES.ServiceService).to(ServiceService).inSingletonScope();
+container.bind<BookingService>(TYPES.BookingService).to(BookingService).inSingletonScope();
+container.bind<AdminService>(TYPES.AdminService).to(AdminService).inSingletonScope();
 
-// Bind controllers
+// Bind controllers (transient: stateless request handlers)
 container.bind<AuthController>(TYPES.AuthController).to(AuthController);
 container.bind<ServiceController>(TYPES.ServiceController).to(ServiceController);
 container.bind<BookingController>(TYPES.BookingController).to(BookingController);
