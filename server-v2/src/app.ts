@@ -13,7 +13,7 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
-
+app.set('trust proxy', 1);
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,

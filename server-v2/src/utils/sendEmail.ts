@@ -1,16 +1,28 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import { transporter } from '../config/nodemailer.js';
 import { env } from '../config/env.js';
 import { User, type IUser } from '../models/User.js';
 
 const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }): Promise<void> => {
-    await transporter.sendMail({
-        from: env.EMAIL_USER,
-        to,
-        subject,
-        html,
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            'api-key': env.EMAIL_PASS,
+        },
+        body: JSON.stringify({
+            sender: { email: env.EMAIL_USER },
+            to: [{ email: to }],
+            subject,
+            htmlContent: html,
+        }),
     });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Brevo email failed: ${response.status} ${response.statusText} - ${text}`);
+    }
 };
 
 export const sendOtpToUser = async (user: IUser): Promise<void> => {
