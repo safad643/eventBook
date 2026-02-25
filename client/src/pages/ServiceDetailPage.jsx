@@ -49,8 +49,9 @@ export default function ServiceDetailPage() {
         try {
             await createBooking({
                 serviceId: id,
-                startDate: startDate.toISOString().split('T')[0],
-                endDate: endDate.toISOString().split('T')[0],
+                // Use local calendar date (not UTC) to avoid off‑by‑one issues
+                startDate: format(startDate, 'yyyy-MM-dd'),
+                endDate: format(endDate, 'yyyy-MM-dd'),
             });
             toast.success('Booking confirmed!');
             navigate('/bookings');

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const CATEGORIES = ['venue', 'hotel', 'caterer', 'cameraman', 'dj', 'decorator', 'other'];
@@ -113,7 +114,7 @@ export default function ServiceFilters({ filters, onChange, onClear }) {
                 <label className={labelClass}>Available On</label>
                 <DatePicker
                     selected={filters.date ? new Date(filters.date) : null}
-                    onChange={(d) => handleChange('date', d ? d.toISOString().split('T')[0] : '')}
+                    onChange={(d) => handleChange('date', d ? format(d, 'yyyy-MM-dd') : '')}
                     placeholderText="Pick a date"
                     minDate={new Date()}
                     className={inputClass}

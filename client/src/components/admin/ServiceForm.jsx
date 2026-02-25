@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { HiOutlineXMark } from 'react-icons/hi2';
+import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const CATEGORIES = ['venue', 'hotel', 'caterer', 'cameraman', 'dj', 'decorator', 'other'];
@@ -52,7 +53,8 @@ export default function ServiceForm({ initialData = null, onSubmit, loading }) {
         formData.append('location', location.trim());
         formData.append('contactDetails', contactDetails.trim());
 
-        const dateStrings = dates.map((d) => d.toISOString().split('T')[0]);
+        // Store dates as calendar dates (yyyy-MM-dd) to stay in sync with backend checks
+        const dateStrings = dates.map((d) => format(d, 'yyyy-MM-dd'));
         formData.append('availabilityDates', JSON.stringify(dateStrings));
 
         if (images) {
